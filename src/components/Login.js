@@ -20,6 +20,23 @@ const Login = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const userData = { email, password };
+
+        axios.post(`${REACT_APP_SERVER_URL}/api/users/login`, userData)
+        .then(response => {
+            const { token } = response.data;
+            // Save token to locaStorage
+            localStorage.setItem('jwtToken', token);
+            // Set token to auth header
+            setAuthToken(token);
+            // Decode token to get user data
+            const decoded = jwt_decode(token);
+            // Set current user
+            props.nowCurrentUser(decoded);
+        })
+        .catch(error => {
+            console.log(error);
+        })
     }
 
     if (props.user) return <Redirect to='/profile' />
@@ -28,12 +45,8 @@ const Login = (props) => {
         <div className="row mt-4">
             <div className="col-md-7 offset-md-3">
                 <div className="card card-body">
-                    <h2 className="py-2">Signup</h2>
+                    <h2 className="py-2">Login</h2>
                     <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="name">Name</label>
-                            <input type="text" name="name" value={name} onChange={handleName} className="form-control" />
-                        </div>
                         <div className="form-group">
                             <label htmlFor="email">Email</label>
                             <input type="email" name="email" value={email} onChange={handleEmail} className="form-control" />
@@ -42,10 +55,7 @@ const Login = (props) => {
                             <label htmlFor="password">Password</label>
                             <input type="password" name="password" value={password} onChange={handlePassword} className="form-control" />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="confirmPassword">Confirm Password</label>
-                            <input type="password" name="confirmPassword" value={confirmPassword} onChange={handleConfirmPassword} className="form-control" />
-                        </div>
+                        <button type="submit" className="btn bt-primary float-right">Submit</button>
                     </form>
                 </div>
             </div>
