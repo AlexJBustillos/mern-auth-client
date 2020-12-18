@@ -10,4 +10,4 @@ const Footer = () => {
     )
 }
 
-export default About;
+export default Footer;
